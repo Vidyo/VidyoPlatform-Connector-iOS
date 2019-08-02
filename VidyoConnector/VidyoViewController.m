@@ -83,12 +83,12 @@ enum VidyoConnectorState {
 
     // Initialize the Vidyo Client library; this should be done once throughout the lifetime of the application.
     [VCConnectorPkg vcInitialize];
-
+    const char * logLevels = [appSettings enableDebug] ? "warning debug@VidyoClient all@LmiPortalSession all@LmiPortalMembership info@LmiResourceManagerUpdates info@LmiPace info@LmiIce all@LmiSignaling": "warning info@VidyoClient info@LmiPortalSession info@LmiPortalMembership info@LmiResourceManagerUpdates info@LmiPace info@LmiIce";
     // Construct the VidyoConnector
     vc = [[VCConnector alloc] init:(void*)&videoView
                             ViewStyle:VCConnectorViewStyleDefault
                             RemoteParticipants:7
-                            LogFileFilter:"warning info@VidyoClient info@LmiPortalSession info@LmiPortalMembership info@LmiResourceManagerUpdates info@LmiPace info@LmiIce"
+                            LogFileFilter:logLevels
                             LogFileName:""
                             UserData:0];
     
