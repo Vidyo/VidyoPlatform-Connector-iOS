@@ -84,12 +84,6 @@
         NSLog(@"Updating url parameter dictionary: key = %@, value = %@", key, val);
     }
 
-    // Populate the "urlHost" if the host exists in the URL.
-    // Note: this is used for VidyoCloud systems, not Vidyo.io.
-    if ([url host]) {
-        [urlParameters setObject:[url host] forKey:@"urlHost"];
-    }
-
     // Notify the VidyoViewController of the URL event
     [[NSNotificationCenter defaultCenter] postNotificationName:@"handleGetURLEvent" object:nil];
 

@@ -417,7 +417,8 @@ enum VidyoConnectorState {
 
         switch (self->vidyoConnectorState) {
             case VidyoConnectorStateConnecting:
-                // Change image of toggleConnectButton to callEndImage
+                // Disable toggleConnectButton and change image to callEndImage
+                [self->toggleConnectButton setEnabled:NO];
                 [self->toggleConnectButton setImage:self->callEndImage forState:UIControlStateNormal];
 
                 // Start the spinner animation
@@ -429,11 +430,16 @@ enum VidyoConnectorState {
                     // Update the view to hide the controls.
                     self->controlsView.hidden = YES;
                 }
+                // Enable the toggleConnectButton
+                [self->toggleConnectButton setEnabled:YES];
+
                 // Stop the spinner animation
                 [self->connectionSpinner stopAnimating];
                 break;
 
             case VidyoConnectorStateDisconnecting:
+                // Disable the toggleConnectButton
+                [self->toggleConnectButton setEnabled:NO];
                 break;
 
             case VidyoConnectorStateDisconnected:
@@ -445,7 +451,8 @@ enum VidyoConnectorState {
                 // Display toolbar in case it is hidden
                 self->toolbarView.hidden = NO;
 
-                // Change image of toggleConnectButton to callStartImage
+                // Enable the toggleConnectButton and change image to callStartImage
+                [self->toggleConnectButton setEnabled:YES];
                 [self->toggleConnectButton setImage:self->callStartImage forState:UIControlStateNormal];
 
                 // If a return URL was provided as a URL parameter, then return to that application
@@ -518,20 +525,18 @@ enum VidyoConnectorState {
         [self changeState:VidyoConnectorStateDisconnecting];
         [vc disconnect];
     } else {
-        
-            // Connect to a VidyoCloud system
-            [self changeState:VidyoConnectorStateConnecting];
-            if (![vc connectToRoomAsGuest:[[[portal text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
-                                  DisplayName:[[[displayName text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
-                                      RoomKey:[[[roomKey text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
-                                      RoomPin:[[[roomPin text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
-                            ConnectorIConnect:self]) {
-                // Connect failed.
-                [self changeState:VidyoConnectorStateFailure];
-            }
+        // Connect to a VidyoCloud system
+        [self changeState:VidyoConnectorStateConnecting];
+        if (![vc connectToRoomAsGuest:[[[portal text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
+                          DisplayName:[[[displayName text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
+                              RoomKey:[[[roomKey text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
+                              RoomPin:[[[roomPin text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] UTF8String]
+                    ConnectorIConnect:self]) {
+            // Connect failed.
+            [self changeState:VidyoConnectorStateFailure];
         }
-        [logger Log:[NSString stringWithFormat:@"VidyoConnectorConnect status = %d", vidyoConnectorState == VidyoConnectorStateConnecting]];
-    
+    }
+    [logger Log:[NSString stringWithFormat:@"VidyoConnectorConnect status = %d", vidyoConnectorState == VidyoConnectorStateConnecting]];
 }
 
 // Toggle the microphone privacy
